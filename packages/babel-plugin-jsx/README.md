@@ -12,14 +12,14 @@ English | [简体中文](/packages/babel-plugin-jsx/README-zh_CN.md)
 Install the plugin with:
 
 ```bash
-npm install @vue/babel-plugin-jsx -D
+npm install @vuetify/babel-plugin-jsx -D
 ```
 
 Then add the plugin to your babel config:
 
 ```json
 {
-  "plugins": ["@vue/babel-plugin-jsx"]
+  "plugins": ["@vuetify/babel-plugin-jsx"]
 }
 ```
 

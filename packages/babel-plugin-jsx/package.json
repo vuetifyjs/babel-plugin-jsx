@@ -1,5 +1,5 @@
 {
-  "name": "@vue/babel-plugin-jsx",
+  "name": "@vuetify/babel-plugin-jsx",
   "version": "1.4.0",
   "description": "Babel plugin for Vue 3 JSX",
   "author": "Amour1688 <lcz_1996@foxmail.com>",
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vuejs/babel-plugin-jsx.git"
+    "url": "git+https://github.com/vuetifyjs/babel-plugin-jsx.git"
   },
   "scripts": {
     "build": "tsdown",
@@ -37,8 +37,8 @@
     "@babel/template": "^7.27.0",
     "@babel/traverse": "^7.27.0",
     "@babel/types": "^7.27.0",
-    "@vue/babel-helper-vue-transform-on": "workspace:*",
-    "@vue/babel-plugin-resolve-type": "workspace:*",
+    "@vuetify/babel-helper-vue-transform-on": "workspace:*",
+    "@vuetify/babel-plugin-resolve-type": "workspace:*",
     "@vue/shared": "^3.5.13"
   },
   "devDependencies": {

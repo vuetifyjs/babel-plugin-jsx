@@ -1,5 +1,5 @@
 {
-  "name": "@vue/babel-plugin-resolve-type",
+  "name": "@vuetify/babel-plugin-resolve-type",
   "version": "1.4.0",
   "description": "Babel plugin for resolving Vue types.",
   "author": "三咲智子 Kevin Deng <sxzz@sxzz.moe>",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vuejs/babel-plugin-jsx.git"
+    "url": "git+https://github.com/vuetifyjs/babel-plugin-jsx.git"
   },
   "publishConfig": {
     "exports": {

@@ -5,7 +5,7 @@ import _template from '@babel/template';
 import _syntaxJsx from '@babel/plugin-syntax-jsx';
 import { addNamed, addNamespace, isModule } from '@babel/helper-module-imports';
 import { type NodePath, type Visitor } from '@babel/traverse';
-import ResolveType from '@vue/babel-plugin-resolve-type';
+import ResolveType from '@vuetify/babel-plugin-resolve-type';
 import { declare } from '@babel/helper-plugin-utils';
 import transformVueJSX from './transform-vue-jsx';
 import sugarFragment from './sugar-fragment';

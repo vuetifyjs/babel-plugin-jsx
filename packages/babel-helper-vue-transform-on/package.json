@@ -1,5 +1,5 @@
 {
-  "name": "@vue/babel-helper-vue-transform-on",
+  "name": "@vuetify/babel-helper-vue-transform-on",
   "version": "1.4.0",
   "type": "commonjs",
   "description": "to help transform on",
@@ -9,6 +9,6 @@
   "types": "index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vuejs/babel-plugin-jsx.git"
+    "url": "git+https://github.com/vuetifyjs/babel-plugin-jsx.git"
   }
 }

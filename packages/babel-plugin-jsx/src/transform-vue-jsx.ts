@@ -112,7 +112,7 @@ const buildProps = (path: NodePath<t.JSXElement>, state: State) => {
         if (!state.get('transformOn')) {
           state.set(
             'transformOn',
-            addDefault(path, '@vue/babel-helper-vue-transform-on', {
+            addDefault(path, '@vuetify/babel-helper-vue-transform-on', {
               nameHint: '_transformOn',
             })
           );

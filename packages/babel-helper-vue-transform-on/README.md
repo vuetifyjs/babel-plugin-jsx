@@ -1,4 +1,4 @@
-# @vue/babel-helper-vue-transform-on
+# @vuetify/babel-helper-vue-transform-on
 
 A package used internally by vue jsx transformer to transform events.
 

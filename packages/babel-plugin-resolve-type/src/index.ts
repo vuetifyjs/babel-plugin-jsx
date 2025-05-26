@@ -29,7 +29,7 @@ export default declare<SimpleTypeResolveOptions>(({ types: t }, options) => {
         isCE: false,
         error(msg, node) {
           throw new Error(
-            `[@vue/babel-plugin-resolve-type] ${msg}\n\n${filename}\n${codeFrameColumns(
+            `[@vuetify/babel-plugin-resolve-type] ${msg}\n\n${filename}\n${codeFrameColumns(
               file.code,
               {
                 start: {
@@ -61,7 +61,7 @@ export default declare<SimpleTypeResolveOptions>(({ types: t }, options) => {
       CallExpression(path) {
         if (!ctx) {
           throw new Error(
-            '[@vue/babel-plugin-resolve-type] context is not loaded.'
+            '[@vuetify/babel-plugin-resolve-type] context is not loaded.'
           );
         }
 
