@@ -8,7 +8,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@vue/babel-plugin-jsx': '@vue/babel-plugin-jsx/src/index.ts',
+      '@vuetify/babel-plugin-jsx': '@vuetify/babel-plugin-jsx/src/index.ts',
     },
   },
   plugins: [
