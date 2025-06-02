@@ -1,6 +1,6 @@
 {
   "name": "@vuetify/babel-plugin-resolve-type",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Babel plugin for resolving Vue types.",
   "author": "三咲智子 Kevin Deng <sxzz@sxzz.moe>",
   "funding": "https://github.com/sponsors/sxzz",
