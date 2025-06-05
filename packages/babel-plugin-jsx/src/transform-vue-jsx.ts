@@ -18,14 +18,12 @@ import {
   transformText,
   walksScope,
 } from './utils';
-import SlotFlags from './slotFlags';
+import SlotFlags, { determineSlotFlags } from './slotFlags';
 import { PatchFlags } from './patchFlags';
 import parseDirectives from './parseDirectives';
 import type { Slots, State } from './interface';
 
 const xlinkRE = /^xlink([A-Z])/;
-
-type ExcludesBoolean = <T>(x: T | false | true) => x is T;
 
 const getJSXAttributeValue = (
   path: NodePath<t.JSXAttribute>,
@@ -52,7 +50,7 @@ const buildProps = (path: NodePath<t.JSXElement>, state: State) => {
   const directives: t.ArrayExpression[] = [];
   const dynamicPropNames = new Set<string>();
 
-  let slots: Slots = null;
+  let slots = null as Slots;
   let patchFlag = 0;
 
   if (props.length === 0) {
@@ -434,7 +432,7 @@ const transformJSXElement = (
   state: State
 ): t.CallExpression => {
   const children = getChildren(path.get('children'), state);
-  const {
+  let {
     tag,
     props,
     isComponent,
@@ -460,12 +458,11 @@ const transformJSXElement = (
     let currentPath = path;
     while (currentPath.parentPath?.isJSXElement()) {
       currentPath = currentPath.parentPath;
-      currentPath.setData('slotFlag', 0);
+      currentPath.setData('slotFlag', SlotFlags.DYNAMIC);
     }
   }
 
-  const slotFlag = path.getData('slotFlag') ?? SlotFlags.STABLE;
-  const optimizeSlots = optimize && slotFlag !== 0;
+  let slotFlag = path.getData('slotFlag') ?? SlotFlags.STABLE;
   let VNodeChild;
 
   if (children.length > 1 || slots) {
@@ -474,29 +471,43 @@ const transformJSXElement = (
         ---> {{ default: () => [a, b], ...slots }}
         ---> {[a, b]}
     */
-    VNodeChild = isComponent
-      ? children.length
-        ? t.objectExpression(
-            [
-              !!children.length &&
-                t.objectProperty(
-                  t.identifier('default'),
-                  t.arrowFunctionExpression(
-                    [],
-                    t.arrayExpression(buildIIFE(path, children))
-                  )
-                ),
-              ...(slots
-                ? t.isObjectExpression(slots)
-                  ? (slots! as t.ObjectExpression).properties
-                  : [t.spreadElement(slots!)]
-                : []),
-              optimizeSlots &&
-                t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag)),
-            ].filter(Boolean as any)
+    if (!isComponent) {
+      VNodeChild = t.arrayExpression(children);
+    } else if (!children.length && !optimize) {
+      VNodeChild = slots;
+    } else {
+      VNodeChild = t.objectExpression([]);
+      if (children.length) {
+        VNodeChild.properties.push(
+          t.objectProperty(
+            t.identifier('default'),
+            t.arrowFunctionExpression(
+              [],
+              t.arrayExpression(buildIIFE(path, children))
+            )
           )
-        : slots
-      : t.arrayExpression(children);
+        );
+      }
+      if (slots) {
+        if (t.isObjectExpression(slots)) {
+          slotFlag = determineSlotFlags(slots, slotFlag);
+          VNodeChild.properties.push(...slots.properties);
+        } else {
+          slotFlag =
+            slotFlag === SlotFlags.DYNAMIC
+              ? slotFlag
+              : slots.name === 'slots'
+                ? SlotFlags.FORWARDED
+                : SlotFlags.DYNAMIC;
+          VNodeChild.properties.push(t.spreadElement(slots));
+        }
+      }
+      if (optimize) {
+        VNodeChild.properties.push(
+          t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag))
+        );
+      }
+    }
   } else if (children.length === 1) {
     /*
       <A>{a}</A> or <A>{() => a}</A>
@@ -512,24 +523,22 @@ const transformJSXElement = (
             t.arrayExpression(buildIIFE(path, [child]))
           )
         ),
-        optimizeSlots &&
-          (t.objectProperty(
-            t.identifier('_'),
-            t.numericLiteral(slotFlag)
-          ) as any),
-      ].filter(Boolean)
+        optimize &&
+          t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag)),
+      ].filter((v) => !!v)
     );
     if (t.isIdentifier(child) && isComponent) {
-      VNodeChild = enableObjectSlots
-        ? t.conditionalExpression(
-            t.callExpression(
-              state.get('@vue/babel-plugin-jsx/runtimeIsSlot')(),
-              [child]
-            ),
+      if (enableObjectSlots) {
+        VNodeChild = t.conditionalExpression(
+          t.callExpression(state.get('@vue/babel-plugin-jsx/runtimeIsSlot')(), [
             child,
-            objectExpression
-          )
-        : objectExpression;
+          ]),
+          child,
+          objectExpression
+        );
+      } else {
+        VNodeChild = objectExpression;
+      }
     } else if (t.isCallExpression(child) && child.loc && isComponent) {
       // the element was generated and doesn't have location information
       if (enableObjectSlots) {
@@ -550,12 +559,9 @@ const transformJSXElement = (
                 t.arrayExpression(buildIIFE(path, [slotId]))
               )
             ),
-            optimizeSlots &&
-              (t.objectProperty(
-                t.identifier('_'),
-                t.numericLiteral(slotFlag)
-              ) as any),
-          ].filter(Boolean)
+            optimize &&
+              t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag)),
+          ].filter((v) => !!v)
         );
         const assignment = t.assignmentExpression('=', slotId, child);
         const condition = t.callExpression(
@@ -570,27 +576,41 @@ const transformJSXElement = (
       t.isFunctionExpression(child) ||
       t.isArrowFunctionExpression(child)
     ) {
-      VNodeChild = t.objectExpression([
-        t.objectProperty(t.identifier('default'), child),
-      ]);
+      VNodeChild = t.objectExpression(
+        [
+          t.objectProperty(t.identifier('default'), child),
+          optimize &&
+            t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag)),
+        ].filter((v) => !!v)
+      );
     } else if (t.isObjectExpression(child)) {
+      slotFlag = determineSlotFlags(child, slotFlag);
       VNodeChild = t.objectExpression(
         [
           ...child.properties,
-          optimizeSlots &&
+          optimize &&
             t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag)),
-        ].filter(Boolean as any)
+        ].filter((v) => !!v)
       );
     } else {
-      VNodeChild = isComponent
-        ? t.objectExpression([
+      VNodeChild = t.arrayExpression([child]);
+      if (isComponent) {
+        VNodeChild = t.objectExpression(
+          [
             t.objectProperty(
               t.identifier('default'),
-              t.arrowFunctionExpression([], t.arrayExpression([child]))
+              t.arrowFunctionExpression([], VNodeChild)
             ),
-          ])
-        : t.arrayExpression([child]);
+            optimize &&
+              t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag)),
+          ].filter((v) => !!v)
+        );
+      }
     }
+  }
+
+  if (slotFlag === SlotFlags.DYNAMIC) {
+    patchFlag |= PatchFlags.DYNAMIC_SLOTS;
   }
 
   const createVNode = t.callExpression(
@@ -605,7 +625,7 @@ const transformJSXElement = (
         t.arrayExpression(
           [...dynamicPropNames.keys()].map((name) => t.stringLiteral(name))
         ),
-    ].filter(Boolean as unknown as ExcludesBoolean)
+    ].filter((v) => !!v)
   );
 
   if (!directives.length) {

@@ -1,0 +1,90 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`dynamic slots 'computed key' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  [name]: () => {},
+  _: 2
+}, 1024);"
+`;
+
+exports[`dynamic slots 'conditional on slot existence' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  default: slots.default ? slots.default() : () => {},
+  _: 2
+}, 1024);"
+`;
+
+exports[`dynamic slots 'conditional value' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  default: foo ? () => {} : undefined,
+  _: 2
+}, 1024);"
+`;
+
+exports[`dynamic slots 'nested slots' 1`] = `
+"import { Fragment as _Fragment, createElementVNode as _createElementVNode, resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  foo: ({
+    bar
+  }) => _createVNode(_resolveComponent("B"), null, {
+    foo: () => {
+      // dynamic
+      return _createElementVNode(_Fragment, null, [bar], 1024);
+    },
+    _: 2
+  }, 1024),
+  _: 1
+});"
+`;
+
+exports[`forwarded slots 'conditional on slot existence' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  default: slots.default ? slots.default() : undefined,
+  _: 3
+});"
+`;
+
+exports[`forwarded slots 'simple forward' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  foo: slots.foo,
+  _: 3
+});"
+`;
+
+exports[`forwarded slots 'spread all' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  ...slots,
+  _: 3
+});"
+`;
+
+exports[`forwarded slots 'spread and add' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  ...slots,
+  foo: () => {},
+  _: 3
+});"
+`;
+
+exports[`forwarded slots 'v-slots passthrough' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  ...slots,
+  _: 3
+});"
+`;
+
+exports[`stable slots 'basic' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  default: () => {},
+  _: 1
+});"
+`;

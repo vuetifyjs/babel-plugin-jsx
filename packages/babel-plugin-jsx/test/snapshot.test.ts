@@ -1,29 +1,9 @@
-import { transform } from '@babel/core';
-import JSX, { type VueJSXPluginOptions } from '../src';
+import { transpile } from './util';
 
 interface Test {
   name: string;
   from: string;
 }
-
-const transpile = (source: string, options: VueJSXPluginOptions = {}) =>
-  new Promise((resolve, reject) =>
-    transform(
-      source,
-      {
-        filename: '',
-        presets: null,
-        plugins: [[JSX, options]],
-        configFile: false,
-      },
-      (error, result) => {
-        if (error) {
-          return reject(error);
-        }
-        resolve(result?.code);
-      }
-    )
-  );
 
 [
   {
@@ -219,10 +199,6 @@ const transpile = (source: string, options: VueJSXPluginOptions = {}) =>
         <F v-model={[xx, b.c, ['a']]} />
       </>
     `,
-  },
-  {
-    name: 'using v-slots without children should not be spread',
-    from: '<A v-slots={slots} />',
   },
   {
     name: 'TemplateLiteral prop and event co-usage',
