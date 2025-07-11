@@ -79,7 +79,7 @@ exports[`disable object slot syntax with defaultSlot > defaultSlot 1`] = `
 "import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("Badge"), null, {
   default: () => [slots.default()],
-  _: 1
+  $stable: true
 });"
 `;
 
@@ -168,14 +168,11 @@ _createElementVNode("div", a, null);"
 exports[`passing object slots via JSX children directive in slot > directive in slot 1`] = `
 "import { Fragment as _Fragment, resolveDirective as _resolveDirective, createElementVNode as _createElementVNode, withDirectives as _withDirectives, resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createElementVNode(_Fragment, null, [_createVNode(_resolveComponent("A"), null, {
-  default: () => [_withDirectives(_createElementVNode("div", null, null, 512), [[_resolveDirective("xxx")]]), foo],
-  _: 2
+  default: () => [_withDirectives(_createElementVNode("div", null, null, 512), [[_resolveDirective("xxx")]]), foo]
 }, 1024), _createVNode(_resolveComponent("A"), null, {
   default: () => [_createVNode(_resolveComponent("B"), null, {
-    default: () => [_withDirectives(_createElementVNode("div", null, null, 512), [[_resolveDirective("xxx")]]), foo],
-    _: 2
-  }, 1024)],
-  _: 2
+    default: () => [_withDirectives(_createElementVNode("div", null, null, 512), [[_resolveDirective("xxx")]]), foo]
+  }, 1024)]
 }, 1024)], 1024);"
 `;
 
@@ -184,13 +181,13 @@ exports[`passing object slots via JSX children directive in slot, in scope > dir
 const vXxx = {};
 _createElementVNode(_Fragment, null, [_createVNode(_resolveComponent("A"), null, {
   default: () => [_withDirectives(_createElementVNode("div", null, null, 512), [[vXxx]]), foo],
-  _: 1
+  $stable: true
 }), _createVNode(_resolveComponent("A"), null, {
   default: () => [_createVNode(_resolveComponent("B"), null, {
     default: () => [_withDirectives(_createElementVNode("div", null, null, 512), [[vXxx]]), foo],
-    _: 1
+    $stable: true
   })],
-  _: 1
+  $stable: true
 })]);"
 `;
 
@@ -198,7 +195,7 @@ exports[`passing object slots via JSX children multiple expressions > multiple e
 "import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("A"), null, {
   default: () => [foo, bar],
-  _: 1
+  $stable: true
 });"
 `;
 
@@ -206,13 +203,13 @@ exports[`passing object slots via JSX children no directive in slot > no directi
 "import { Fragment as _Fragment, createElementVNode as _createElementVNode, resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createElementVNode(_Fragment, null, [_createVNode(_resolveComponent("A"), null, {
   default: () => [_createElementVNode("div", null, null), foo],
-  _: 1
+  $stable: true
 }), _createVNode(_resolveComponent("A"), null, {
   default: () => [_createVNode(_resolveComponent("B"), null, {
     default: () => [_createElementVNode("div", null, null), foo],
-    _: 1
+    $stable: true
   })],
-  _: 1
+  $stable: true
 })]);"
 `;
 
@@ -220,7 +217,7 @@ exports[`passing object slots via JSX children single expression, function expre
 "import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("A"), null, {
   default: () => "foo",
-  _: 1
+  $stable: true
 });"
 `;
 
@@ -233,7 +230,7 @@ function _isSlot(s) {
 const foo = () => 1;
 _createVNode(_resolveComponent("A"), null, _isSlot(_slot = foo()) ? _slot : {
   default: () => [_slot],
-  _: 1
+  $stable: true
 });"
 `;
 
@@ -256,8 +253,7 @@ const _a = function () {
   return a;
 }();
 a = _createVNode(A, null, _isSlot(a) ? a : {
-  default: () => [_a],
-  _: 2
+  default: () => [_a]
 }, 1024);"
 `;
 

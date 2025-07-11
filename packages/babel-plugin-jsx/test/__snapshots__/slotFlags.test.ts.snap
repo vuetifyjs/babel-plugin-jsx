@@ -3,8 +3,7 @@
 exports[`dynamic slots 'computed key' 1`] = `
 "import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("A"), null, {
-  [name]: () => {},
-  _: 2
+  [name]: () => {}
 }, 1024);"
 `;
 
@@ -19,32 +18,31 @@ _createVNode(_resolveComponent("A"), null, {
 exports[`dynamic slots 'conditional value' 1`] = `
 "import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("A"), null, {
-  default: foo ? () => {} : undefined,
-  _: 2
+  default: foo ? () => {} : undefined
 }, 1024);"
 `;
 
-exports[`dynamic slots 'nested slots' 1`] = `
-"import { Fragment as _Fragment, createElementVNode as _createElementVNode, resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+exports[`dynamic slots 'spread and computed key' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("A"), null, {
-  foo: ({
-    bar
-  }) => _createVNode(_resolveComponent("B"), null, {
-    foo: () => {
-      // dynamic
-      return _createElementVNode(_Fragment, null, [bar], 1024);
-    },
-    _: 2
-  }, 1024),
-  _: 1
-});"
+  ...slots,
+  [name]: () => {}
+}, 1024);"
+`;
+
+exports[`dynamic slots 'spread and conditional value' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  ...slots,
+  default: foo ? () => {} : undefined
+}, 1024);"
 `;
 
 exports[`forwarded slots 'conditional on slot existence' 1`] = `
 "import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("A"), null, {
   default: slots.default ? slots.default() : undefined,
-  _: 3
+  $stable: true
 });"
 `;
 
@@ -52,7 +50,7 @@ exports[`forwarded slots 'simple forward' 1`] = `
 "import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("A"), null, {
   foo: slots.foo,
-  _: 3
+  $stable: true
 });"
 `;
 
@@ -60,16 +58,25 @@ exports[`forwarded slots 'spread all' 1`] = `
 "import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("A"), null, {
   ...slots,
-  _: 3
+  $stable: true
 });"
 `;
 
-exports[`forwarded slots 'spread and add' 1`] = `
+exports[`forwarded slots 'spread and add stable' 1`] = `
 "import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("A"), null, {
   ...slots,
   foo: () => {},
-  _: 3
+  $stable: true
+});"
+`;
+
+exports[`forwarded slots 'spread and conditional' 1`] = `
+"import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  ...slots,
+  default: slots.default ? slots.default() : undefined,
+  $stable: true
 });"
 `;
 
@@ -77,7 +84,7 @@ exports[`forwarded slots 'v-slots passthrough' 1`] = `
 "import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("A"), null, {
   ...slots,
-  _: 3
+  $stable: true
 });"
 `;
 
@@ -85,6 +92,20 @@ exports[`stable slots 'basic' 1`] = `
 "import { resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
 _createVNode(_resolveComponent("A"), null, {
   default: () => {},
-  _: 1
+  $stable: true
+});"
+`;
+
+exports[`stable slots 'nested slots' 1`] = `
+"import { Fragment as _Fragment, createElementVNode as _createElementVNode, resolveComponent as _resolveComponent, createVNode as _createVNode } from "vue";
+_createVNode(_resolveComponent("A"), null, {
+  foo: ({
+    bar
+  }) => _createVNode(_resolveComponent("B"), null, {
+    foo: () => {
+      return _createElementVNode(_Fragment, null, [bar], 1024);
+    }
+  }, 1024),
+  $stable: true
 });"
 `;

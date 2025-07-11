@@ -18,7 +18,7 @@ import {
   transformText,
   walksScope,
 } from './utils';
-import SlotFlags, { determineSlotFlags } from './slotFlags';
+import SlotFlags, { determineSlotFlags, renderSlotFlags } from './slotFlags';
 import { PatchFlags } from './patchFlags';
 import parseDirectives from './parseDirectives';
 import type { Slots, State } from './interface';
@@ -489,22 +489,19 @@ const transformJSXElement = (
         );
       }
       if (slots) {
+        slotFlag = determineSlotFlags(slots, slotFlag);
         if (t.isObjectExpression(slots)) {
-          slotFlag = determineSlotFlags(slots, slotFlag);
           VNodeChild.properties.push(...slots.properties);
         } else {
-          slotFlag =
-            slotFlag === SlotFlags.DYNAMIC
-              ? slotFlag
-              : slots.name === 'slots'
-                ? SlotFlags.FORWARDED
-                : SlotFlags.DYNAMIC;
           VNodeChild.properties.push(t.spreadElement(slots));
         }
       }
-      if (optimize) {
+      if (
+        optimize &&
+        (slotFlag === SlotFlags.STABLE || slotFlag === SlotFlags.FORWARDED)
+      ) {
         VNodeChild.properties.push(
-          t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag))
+          t.objectProperty(t.identifier('$stable'), t.booleanLiteral(true))
         );
       }
     }
@@ -523,8 +520,7 @@ const transformJSXElement = (
             t.arrayExpression(buildIIFE(path, [child]))
           )
         ),
-        optimize &&
-          t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag)),
+        optimize && renderSlotFlags(slotFlag),
       ].filter((v) => !!v)
     );
     if (t.isIdentifier(child) && isComponent) {
@@ -559,8 +555,7 @@ const transformJSXElement = (
                 t.arrayExpression(buildIIFE(path, [slotId]))
               )
             ),
-            optimize &&
-              t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag)),
+            optimize && renderSlotFlags(slotFlag),
           ].filter((v) => !!v)
         );
         const assignment = t.assignmentExpression('=', slotId, child);
@@ -579,18 +574,15 @@ const transformJSXElement = (
       VNodeChild = t.objectExpression(
         [
           t.objectProperty(t.identifier('default'), child),
-          optimize &&
-            t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag)),
+          optimize && renderSlotFlags(slotFlag),
         ].filter((v) => !!v)
       );
     } else if (t.isObjectExpression(child)) {
       slotFlag = determineSlotFlags(child, slotFlag);
       VNodeChild = t.objectExpression(
-        [
-          ...child.properties,
-          optimize &&
-            t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag)),
-        ].filter((v) => !!v)
+        [...child.properties, optimize && renderSlotFlags(slotFlag)].filter(
+          (v) => !!v
+        )
       );
     } else {
       VNodeChild = t.arrayExpression([child]);
@@ -601,8 +593,7 @@ const transformJSXElement = (
               t.identifier('default'),
               t.arrowFunctionExpression([], VNodeChild)
             ),
-            optimize &&
-              t.objectProperty(t.identifier('_'), t.numericLiteral(slotFlag)),
+            optimize && renderSlotFlags(slotFlag),
           ].filter((v) => !!v)
         );
       }

@@ -8,25 +8,24 @@ test.for([
       {{ default: () => {} }}
     </A>`,
   },
-])('stable slots $name', async ({ source }) => {
-  expect(await transpile(source, { optimize: true })).toMatchSnapshot();
-});
-
-// dynamic slots
-test.for([
   {
     name: 'nested slots',
     source: `<A>
       {{ foo: ({ bar }) => (
         <B>
           {{ foo: () => {
-            // dynamic
             return <>{ bar }</>
           }}}
         </B>
       )}}
     </A>`,
   },
+])('stable slots $name', async ({ source }) => {
+  expect(await transpile(source, { optimize: true })).toMatchSnapshot();
+});
+
+// dynamic slots
+test.for([
   {
     name: 'computed key',
     source: `<A>
@@ -39,6 +38,24 @@ test.for([
     name: 'conditional value',
     source: `<A>
       {{
+        default: foo ? () => {} : undefined,
+      }}
+    </A>`,
+  },
+  {
+    name: 'spread and computed key',
+    source: `<A>
+      {{ 
+        ...slots,
+        [name]: () => {},
+      }}
+    </A>`,
+  },
+  {
+    name: 'spread and conditional value',
+    source: `<A>
+      {{ 
+        ...slots,
         default: foo ? () => {} : undefined,
       }}
     </A>`,
@@ -84,7 +101,7 @@ test.for([
     source: `<A v-slots={ slots } />`,
   },
   {
-    name: 'spread and add',
+    name: 'spread and add stable',
     source: `<A>
       {{ 
         ...slots,
@@ -96,6 +113,15 @@ test.for([
     name: 'conditional on slot existence',
     source: `<A>
       {{ default: slots.default ? slots.default() : undefined }}
+    </A>`,
+  },
+  {
+    name: 'spread and conditional',
+    source: `<A>
+      {{ 
+        ...slots,
+        default: slots.default ? slots.default() : undefined
+      }}
     </A>`,
   },
 ])('forwarded slots $name', async ({ source, skip }, ctx) => {

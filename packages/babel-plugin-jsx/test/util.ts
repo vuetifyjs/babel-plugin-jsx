@@ -1,7 +1,7 @@
 import { transform } from '@babel/core';
 import JSX, { type VueJSXPluginOptions } from '../src';
 
-export function transpile (source: string, options: VueJSXPluginOptions = {}) {
+export function transpile(source: string, options: VueJSXPluginOptions = {}) {
   return new Promise((resolve, reject) =>
     transform(
       source,
@@ -18,5 +18,5 @@ export function transpile (source: string, options: VueJSXPluginOptions = {}) {
         resolve(result?.code);
       }
     )
-  )
+  );
 }
